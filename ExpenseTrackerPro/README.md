@@ -1,13 +1,13 @@
 # ExpenseTracker Pro
 
-Aplicație desktop Windows pentru urmărirea bugetului personal, construită cu C#, WPF, MVVM și SQLite.
+Aplicație desktop Windows, offline-first, pentru importul și analiza extraselor bancare personale.
 
 ## Cerințe
 
 - Windows 10/11
 - .NET 8 SDK
 
-## Rulare
+## Pornire
 
 ```powershell
 cd ExpenseTrackerPro
@@ -15,20 +15,28 @@ dotnet restore
 dotnet run
 ```
 
-Baza de date locală se creează automat în `%LOCALAPPDATA%\ExpenseTrackerPro\expense-tracker.db`.
+## Import extras
 
-## Publicare EXE
+1. Deschide fila **Import extras**.
+2. Alege un fișier `.csv` sau `.xlsx` de maximum 15 MB.
+3. Aplicația detectează coloane uzuale: dată, descriere, debit, credit sau sumă.
+4. Tranzacțiile duplicate sunt ignorate prin compararea datei, sumei, tipului și descrierii.
+5. Extrasul nu este încărcat în cloud; este procesat local și tranzacțiile sunt salvate în SQLite.
 
-```powershell
-dotnet publish -c Release -r win-x64 --self-contained true
-```
+Pentru rezultate consistente, exportă extrasul cu antete de tipul `Data`, `Descriere`, `Debit`, `Credit` sau `Sumă`.
 
-## Funcții incluse
+## Analiză
 
-- Venituri și cheltuieli salvate local în SQLite
-- Dashboard lunar
-- Validare date de intrare
-- Ștergerea unei tranzacții selectate
-- Export CSV în Documents\ExpenseTrackerPro
+Fila **Analiză** calculează:
 
-Nu salva fișierul `.db` în GitHub, deoarece poate conține date financiare personale.
+- cheltuieli discreționare pentru abonamente, cumpărături și distracție;
+- top categorii și comercianți repetați;
+- abonamente detectate pentru comercianți cunoscuți;
+- tranzacții neobișnuit de mari;
+- proiecția cheltuielilor până la finalul lunii și riscul de depășire a bugetului.
+
+Recomandările sunt euristice și explicabile; nu sunt consultanță financiară și nu etichetează automat o plată ca inutilă.
+
+## Stocare locală
+
+Baza de date este creată în `%LOCALAPPDATA%\ExpenseTrackerPro\expense-tracker.db`. Nu încărca această bază sau extrase bancare în repository.
