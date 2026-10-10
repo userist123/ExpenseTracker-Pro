@@ -22,6 +22,31 @@
             <Setter Property="Background" Value="#1B3855" />
         </Style>
 
+        <!-- Flat progress bar: a rounded track with a coloured indicator. PART_Track and PART_Indicator are required. -->
+        <Style x:Key="FlatProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Background" Value="#1B3855" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4" />
+                            <Border x:Name="PART_Track" />
+                            <Border
+                                x:Name="PART_Indicator"
+                                HorizontalAlignment="Left"
+                                Background="{TemplateBinding Foreground}"
+                                CornerRadius="4" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource PanelBrush}" />
             <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />

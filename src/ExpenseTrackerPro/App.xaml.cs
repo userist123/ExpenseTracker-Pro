@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Markup;
 using ExpenseTrackerPro.Core.Data;
 using ExpenseTrackerPro.Core.Services;
+using ExpenseTrackerPro.Services;
 using ExpenseTrackerPro.ViewModels;
 using ExpenseTrackerPro.Views;
 
@@ -58,7 +59,8 @@ public partial class App : Application
             "ExpenseTrackerPro");
         Directory.CreateDirectory(folder);
 
-        var factory = AppDbContextFactory.ForFile(Path.Combine(folder, "expense-tracker.db"));
+        var databasePath = Path.Combine(folder, "expense-tracker.db");
+        var factory = AppDbContextFactory.ForFile(databasePath);
         using (var db = factory.CreateDbContext())
         {
             DatabaseInitializer.Initialize(db);
@@ -66,7 +68,8 @@ public partial class App : Application
 
         var settings = new SettingsService(factory);
         var transactions = new TransactionService(factory, settings);
-        var viewModel = new MainViewModel(transactions);
+        var backup = new BackupService(databasePath);
+        var viewModel = new MainViewModel(transactions, settings, backup, new WpfDialogService());
 
         return new MainWindow { DataContext = viewModel };
     }

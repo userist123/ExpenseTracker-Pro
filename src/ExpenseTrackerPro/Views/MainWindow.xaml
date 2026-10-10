@@ -10,22 +10,104 @@
     Background="{StaticResource BackgroundBrush}"
     WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <Style x:Key="MetricValueStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        </Style>
+
+        <!-- Balance text turns red when expenses exceed income. -->
+        <Style
+            x:Key="BalanceValueStyle"
+            TargetType="TextBlock"
+            BasedOn="{StaticResource MetricValueStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsBalanceNegative}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Remaining budget text turns red when the budget is exceeded. -->
+        <Style
+            x:Key="RemainingBudgetValueStyle"
+            TargetType="TextBlock"
+            BasedOn="{StaticResource MetricValueStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsOverBudget}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style
+            x:Key="BudgetProgressBarStyle"
+            TargetType="ProgressBar"
+            BasedOn="{StaticResource FlatProgressBarStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsOverBudget}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Visible only while a transaction is being edited. -->
+        <Style
+            x:Key="EditOnlyButtonStyle"
+            TargetType="Button"
+            BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- "No expenses" hint, visible only when the chart is empty. -->
+        <Style x:Key="EmptyChartTextStyle" TargetType="TextBlock">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Setter Property="Margin" Value="0,12,0,0" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasCategoryExpenses}" Value="False">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Placeholder shown over the search box while it is empty. -->
+        <Style x:Key="SearchPlaceholderStyle" TargetType="TextBlock">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="Foreground" Value="Gray" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SearchText}" Value="">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="28">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Header: title and month picker -->
-        <Grid Grid.Row="0" Margin="0,0,0,24">
+        <!-- Header: title, backup/restore and month navigation -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel>
+            <StackPanel VerticalAlignment="Center">
                 <TextBlock
                     Text="ExpenseTracker Pro"
                     FontSize="22"
@@ -36,27 +118,48 @@
                     Foreground="{StaticResource MutedBrush}" />
             </StackPanel>
 
-            <DatePicker
+            <StackPanel
                 Grid.Column="1"
-                Width="155"
-                SelectedDate="{Binding SelectedDate}" />
+                Orientation="Horizontal"
+                VerticalAlignment="Center">
+                <Button
+                    Content="Backup"
+                    ToolTip="Salvează o copie a bazei de date"
+                    Command="{Binding BackupCommand}" />
+                <Button
+                    Margin="8,0,0,0"
+                    Content="Restaurează"
+                    ToolTip="Înlocuiește datele curente cu o copie salvată"
+                    Command="{Binding RestoreCommand}" />
+
+                <Button
+                    Margin="32,0,0,0"
+                    Content="◀"
+                    ToolTip="Luna anterioară"
+                    Command="{Binding PreviousMonthCommand}" />
+                <TextBlock
+                    MinWidth="150"
+                    Margin="8,0"
+                    VerticalAlignment="Center"
+                    TextAlignment="Center"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource TextBrush}"
+                    Text="{Binding MonthTitle}" />
+                <Button
+                    Content="▶"
+                    ToolTip="Luna următoare"
+                    Command="{Binding NextMonthCommand}" />
+                <Button
+                    Margin="8,0,0,0"
+                    Content="Azi"
+                    ToolTip="Înapoi la luna curentă"
+                    Command="{Binding GoToTodayCommand}" />
+            </StackPanel>
         </Grid>
 
-        <!-- Tagline -->
-        <StackPanel Grid.Row="1" Margin="0,0,0,20">
-            <TextBlock
-                Text="Control clar asupra banilor tăi."
-                FontSize="29"
-                FontWeight="Bold"
-                Foreground="{StaticResource TextBrush}" />
-            <TextBlock
-                Margin="0,6,0,0"
-                Text="Tranzacțiile sunt salvate în SQLite, pe acest calculator."
-                Foreground="{StaticResource MutedBrush}" />
-        </StackPanel>
-
-        <!-- Monthly summary cards -->
-        <UniformGrid Grid.Row="2" Columns="4" Margin="0,0,0,16">
+        <!-- Monthly summary cards (always the whole month, regardless of the list filter) -->
+        <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,16">
             <Border Style="{StaticResource CardStyle}" Margin="0,0,12,0">
                 <StackPanel>
                     <TextBlock Text="VENITURI" Foreground="{StaticResource MutedBrush}" />
@@ -83,10 +186,8 @@
                 <StackPanel>
                     <TextBlock Text="SOLD LUNAR" Foreground="{StaticResource MutedBrush}" />
                     <TextBlock
-                        Text="{Binding Balance, StringFormat={}{0:N2} RON}"
-                        FontSize="22"
-                        FontWeight="Bold"
-                        Foreground="{StaticResource TextBrush}" />
+                        Style="{StaticResource BalanceValueStyle}"
+                        Text="{Binding Balance, StringFormat={}{0:N2} RON}" />
                 </StackPanel>
             </Border>
 
@@ -94,139 +195,259 @@
                 <StackPanel>
                     <TextBlock Text="BUGET RĂMAS" Foreground="{StaticResource MutedBrush}" />
                     <TextBlock
-                        Text="{Binding RemainingBudget, StringFormat={}{0:N2} RON}"
-                        FontSize="22"
-                        FontWeight="Bold"
-                        Foreground="{StaticResource TextBrush}" />
+                        Style="{StaticResource RemainingBudgetValueStyle}"
+                        Text="{Binding RemainingBudget, StringFormat={}{0:N2} RON}" />
                     <TextBlock
                         Text="{Binding MonthlyBudget, StringFormat=din {0:N2} RON}"
                         Foreground="{StaticResource MutedBrush}" />
+
+                    <ProgressBar
+                        Margin="0,10,0,0"
+                        Style="{StaticResource BudgetProgressBarStyle}"
+                        Minimum="0"
+                        Maximum="1"
+                        Value="{Binding BudgetUsage, Mode=OneWay}" />
+
+                    <DockPanel Margin="0,12,0,0">
+                        <Button
+                            DockPanel.Dock="Right"
+                            Margin="8,0,0,0"
+                            Padding="10,4"
+                            Content="Setează"
+                            ToolTip="Salvează bugetul lunar"
+                            Command="{Binding SaveBudgetCommand}" />
+                        <TextBox
+                            VerticalContentAlignment="Center"
+                            ToolTip="Buget lunar (RON)"
+                            Text="{Binding BudgetInput, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
                 </StackPanel>
             </Border>
         </UniformGrid>
 
-        <!-- Main content: add form and transaction list -->
-        <Grid Grid.Row="3">
+        <!-- Main content: form and chart on the left, transaction list on the right -->
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="360" />
+                <ColumnDefinition Width="340" />
                 <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Add transaction form -->
-            <Border
-                Grid.Column="0"
-                Style="{StaticResource CardStyle}"
-                VerticalAlignment="Top">
-                <StackPanel>
-                    <TextBlock
-                        Text="Adaugă tranzacție"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Foreground="{StaticResource TextBrush}" />
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,0,6,0">
+                    <!-- Add / edit transaction form -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Text="{Binding FormTitle}"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource TextBrush}" />
 
-                    <TextBlock
-                        Margin="0,18,0,6"
-                        Text="Tip"
-                        Foreground="{StaticResource MutedBrush}" />
-                    <ComboBox
-                        ItemsSource="{Binding TransactionTypes}"
-                        DisplayMemberPath="DisplayName"
-                        SelectedValuePath="Value"
-                        SelectedValue="{Binding NewType}" />
+                            <TextBlock
+                                Margin="0,18,0,6"
+                                Text="Tip"
+                                Foreground="{StaticResource MutedBrush}" />
+                            <ComboBox
+                                ItemsSource="{Binding TransactionTypes}"
+                                DisplayMemberPath="DisplayName"
+                                SelectedValuePath="Value"
+                                SelectedValue="{Binding NewType}" />
 
-                    <TextBlock
-                        Margin="0,12,0,6"
-                        Text="Categorie"
-                        Foreground="{StaticResource MutedBrush}" />
-                    <ComboBox
-                        ItemsSource="{Binding Categories}"
-                        SelectedItem="{Binding NewCategory}" />
+                            <TextBlock
+                                Margin="0,12,0,6"
+                                Text="Categorie"
+                                Foreground="{StaticResource MutedBrush}" />
+                            <ComboBox
+                                ItemsSource="{Binding Categories}"
+                                SelectedItem="{Binding NewCategory}" />
 
-                    <TextBlock
-                        Margin="0,12,0,6"
-                        Text="Descriere"
-                        Foreground="{StaticResource MutedBrush}" />
-                    <TextBox
-                        Text="{Binding NewDescription, UpdateSourceTrigger=PropertyChanged}"
-                        MaxLength="120" />
+                            <TextBlock
+                                Margin="0,12,0,6"
+                                Text="Descriere"
+                                Foreground="{StaticResource MutedBrush}" />
+                            <TextBox
+                                Text="{Binding NewDescription, UpdateSourceTrigger=PropertyChanged}"
+                                MaxLength="120" />
 
-                    <TextBlock
-                        Margin="0,12,0,6"
-                        Text="Sumă (RON)"
-                        Foreground="{StaticResource MutedBrush}" />
-                    <TextBox Text="{Binding NewAmount, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Margin="0,12,0,6"
+                                Text="Sumă (RON)"
+                                Foreground="{StaticResource MutedBrush}" />
+                            <TextBox Text="{Binding NewAmount, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock
-                        Margin="0,12,0,6"
-                        Text="Dată"
-                        Foreground="{StaticResource MutedBrush}" />
-                    <DatePicker SelectedDate="{Binding NewDate}" />
+                            <TextBlock
+                                Margin="0,12,0,6"
+                                Text="Dată"
+                                Foreground="{StaticResource MutedBrush}" />
+                            <DatePicker SelectedDate="{Binding NewDate}" />
 
-                    <Button
-                        Margin="0,18,0,0"
-                        Content="Salvează tranzacția"
-                        Command="{Binding AddTransactionCommand}"
-                        Background="{StaticResource AccentBrush}"
-                        Foreground="#082019" />
+                            <Button
+                                Margin="0,18,0,0"
+                                Content="{Binding SaveButtonText}"
+                                Command="{Binding SaveTransactionCommand}"
+                                Background="{StaticResource AccentBrush}"
+                                Foreground="#082019" />
+                            <Button
+                                Margin="0,8,0,0"
+                                Style="{StaticResource EditOnlyButtonStyle}"
+                                Content="Renunță"
+                                Command="{Binding CancelEditCommand}" />
 
-                    <TextBlock
-                        Margin="0,12,0,0"
-                        Text="{Binding StatusMessage}"
-                        Foreground="{StaticResource MutedBrush}"
-                        TextWrapping="Wrap" />
+                            <TextBlock
+                                Margin="0,12,0,0"
+                                Text="{Binding StatusMessage}"
+                                Foreground="{StaticResource MutedBrush}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Expenses by category -->
+                    <Border Margin="0,16,0,0" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Text="Cheltuieli pe categorii"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource TextBrush}" />
+
+                            <TextBlock
+                                Style="{StaticResource EmptyChartTextStyle}"
+                                Text="Nu există cheltuieli în această lună." />
+
+                            <ItemsControl Margin="0,14,0,0" ItemsSource="{Binding CategoryExpenses}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,12">
+                                            <DockPanel>
+                                                <TextBlock
+                                                    DockPanel.Dock="Right"
+                                                    Width="40"
+                                                    TextAlignment="Right"
+                                                    Foreground="{StaticResource MutedBrush}"
+                                                    Text="{Binding Share, StringFormat={}{0:P0}}" />
+                                                <TextBlock
+                                                    DockPanel.Dock="Right"
+                                                    Margin="8,0,0,0"
+                                                    Foreground="{StaticResource TextBrush}"
+                                                    Text="{Binding Amount, StringFormat={}{0:N2} RON}" />
+                                                <TextBlock
+                                                    TextTrimming="CharacterEllipsis"
+                                                    Foreground="{StaticResource TextBrush}"
+                                                    Text="{Binding Category}" />
+                                            </DockPanel>
+                                            <ProgressBar
+                                                Margin="0,5,0,0"
+                                                Style="{StaticResource FlatProgressBarStyle}"
+                                                Minimum="0"
+                                                Maximum="1"
+                                                Value="{Binding Share, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-            </Border>
+            </ScrollViewer>
 
             <!-- Transaction list -->
             <Border Grid.Column="2" Style="{StaticResource CardStyle}">
                 <DockPanel>
-                    <StackPanel
-                        DockPanel.Dock="Top"
-                        Margin="0,0,0,12"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            Text="Tranzacții"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Foreground="{StaticResource TextBrush}"
-                            VerticalAlignment="Center" />
+                    <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <StackPanel
+                            Margin="0,0,16,8"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                            <TextBlock
+                                Text="Tranzacții"
+                                FontSize="16"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource TextBrush}"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Margin="8,0,0,0"
+                                Text="{Binding TransactionCountText}"
+                                Foreground="{StaticResource MutedBrush}"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
                         <Button
-                            Margin="16,0,0,0"
+                            Margin="0,0,8,8"
+                            Content="Editează"
+                            ToolTip="Încarcă tranzacția selectată în formular (sau dublu-click pe rând)"
+                            Command="{Binding EditTransactionCommand}" />
+                        <Button
+                            Margin="0,0,8,8"
                             Content="Șterge selectată"
                             Command="{Binding DeleteTransactionCommand}" />
                         <Button
-                            Margin="8,0,0,0"
+                            Margin="0,0,8,8"
+                            Content="Import CSV"
+                            Command="{Binding ImportCsvCommand}" />
+                        <Button
+                            Margin="0,0,0,8"
                             Content="Export CSV"
+                            ToolTip="Exportă toată luna selectată"
                             Command="{Binding ExportCsvCommand}" />
-                    </StackPanel>
+                    </WrapPanel>
+
+                    <!-- Search and category filter (affect only the list below) -->
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="190" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <TextBox
+                                VerticalContentAlignment="Center"
+                                ToolTip="Caută în descriere (nu contează literele mari/mici sau diacriticele)"
+                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Style="{StaticResource SearchPlaceholderStyle}"
+                                Text="Caută în descriere…" />
+                        </Grid>
+
+                        <ComboBox
+                            Grid.Column="2"
+                            ItemsSource="{Binding FilterCategories}"
+                            SelectedItem="{Binding SelectedCategoryFilter}" />
+                    </Grid>
 
                     <DataGrid
                         ItemsSource="{Binding Transactions}"
                         SelectedItem="{Binding SelectedTransaction}"
                         AutoGenerateColumns="False"
                         CanUserAddRows="False"
-                        IsReadOnly="True">
+                        IsReadOnly="True"
+                        SelectionMode="Single">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <EventSetter Event="MouseDoubleClick" Handler="TransactionRow_MouseDoubleClick" />
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn
                                 Header="Data"
-                                Width="120"
+                                Width="95"
                                 Binding="{Binding Date, StringFormat={}{0:dd.MM.yyyy}}" />
                             <DataGridTextColumn
                                 Header="Descriere"
                                 Width="*"
+                                MinWidth="100"
                                 Binding="{Binding Description}" />
                             <DataGridTextColumn
                                 Header="Categorie"
-                                Width="150"
+                                Width="115"
                                 Binding="{Binding Category}" />
                             <DataGridTextColumn
                                 Header="Tip"
-                                Width="110"
+                                Width="90"
                                 Binding="{Binding Type, Converter={StaticResource TransactionTypeDisplay}}" />
                             <DataGridTextColumn
                                 Header="Sumă"
-                                Width="140"
+                                Width="110"
                                 Binding="{Binding Amount, StringFormat={}{0:N2} RON}" />
                         </DataGrid.Columns>
                     </DataGrid>
