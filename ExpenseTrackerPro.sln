@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{46D58839-2E5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTrackerPro", "src\ExpenseTrackerPro\ExpenseTrackerPro.csproj", "{9B148F6F-E758-451B-8B29-3A6E8212927B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTrackerPro.Core", "src\ExpenseTrackerPro.Core\ExpenseTrackerPro.Core.csproj", "{D7E1B98A-A936-4C50-9E88-723F40B835C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,13 @@ Global
 		{9B148F6F-E758-451B-8B29-3A6E8212927B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B148F6F-E758-451B-8B29-3A6E8212927B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B148F6F-E758-451B-8B29-3A6E8212927B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7E1B98A-A936-4C50-9E88-723F40B835C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7E1B98A-A936-4C50-9E88-723F40B835C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7E1B98A-A936-4C50-9E88-723F40B835C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7E1B98A-A936-4C50-9E88-723F40B835C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9B148F6F-E758-451B-8B29-3A6E8212927B} = {46D58839-2E5A-4604-B274-7BF3ECDCC957}
+		{D7E1B98A-A936-4C50-9E88-723F40B835C8} = {46D58839-2E5A-4604-B274-7BF3ECDCC957}
 	EndGlobalSection
 EndGlobal

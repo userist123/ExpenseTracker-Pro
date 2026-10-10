@@ -1,0 +1,9 @@
+namespace ExpenseTrackerPro.Core.Models;
+
+/// <summary>A persisted key/value application setting.</summary>
+public sealed class AppSetting
+{
+    public string Key { get; set; } = string.Empty;
+
+    public string Value { get; set; } = string.Empty;
+}
