@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace ExpenseTrackerPro;
+namespace ExpenseTrackerPro.Views;
 
 public partial class MainWindow : Window
 {
