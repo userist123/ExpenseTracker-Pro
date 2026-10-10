@@ -9,7 +9,7 @@ public static class CsvExporter
     public const string Header = "Data;Descriere;Categorie;Tip;SumaRON";
 
     private const string LineBreak = "\r\n";
-    private static readonly char[] FormulaTriggers = ['=', '+', '-', '@', '\t', '\r'];
+    internal static readonly char[] FormulaTriggers = ['=', '+', '-', '@', '\t', '\r'];
 
     /// <summary>File name for a month export, e.g. <c>tranzactii-2026-10.csv</c>.</summary>
     public static string GetFileName(int year, int month)

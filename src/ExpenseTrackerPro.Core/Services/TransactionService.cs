@@ -111,6 +111,78 @@ public sealed class TransactionService
         return OperationResult<TransactionItem>.Ok(item);
     }
 
+    /// <summary>
+    /// Inserts the valid rows in a single <c>SaveChanges</c>. Rows that fail the same validation as
+    /// <see cref="Add"/> are reported as errors. A row is a duplicate when a transaction with the same date, type,
+    /// category, description (trimmed) and amount already exists; identical rows inside the import are matched
+    /// one-to-one against the existing ones, so importing the same file twice adds nothing the second time while
+    /// two genuinely equal purchases in one file are both kept.
+    /// </summary>
+    public ImportReport ImportMany(IEnumerable<ImportRow> rows)
+    {
+        var errors = new List<ImportError>();
+        var valid = new List<ImportRow>();
+
+        foreach (var row in rows)
+        {
+            var validation = Validate(row.Type, row.Category, row.Description, row.Amount);
+            if (validation is null)
+            {
+                valid.Add(row);
+            }
+            else
+            {
+                errors.Add(new ImportError(row.LineNumber, validation));
+            }
+        }
+
+        if (valid.Count == 0)
+        {
+            return new ImportReport(0, 0, errors);
+        }
+
+        var from = valid.Min(x => x.Date.Date);
+        var to = valid.Max(x => x.Date.Date).AddDays(1);
+
+        using var db = _factory.CreateDbContext();
+        var existing = db.Transactions
+            .AsNoTracking()
+            .Where(x => x.Date >= from && x.Date < to)
+            .AsEnumerable()
+            .GroupBy(x => DuplicateKey(x.Date, x.Type, x.Category, x.Description, x.Amount))
+            .ToDictionary(group => group.Key, group => group.Count());
+
+        var imported = 0;
+        var duplicates = 0;
+        var now = DateTime.UtcNow;
+
+        foreach (var row in valid)
+        {
+            var key = DuplicateKey(row.Date, row.Type, row.Category, row.Description, row.Amount);
+            if (existing.TryGetValue(key, out var remaining) && remaining > 0)
+            {
+                existing[key] = remaining - 1;
+                duplicates++;
+                continue;
+            }
+
+            db.Transactions.Add(new TransactionItem
+            {
+                Id = Guid.NewGuid(),
+                Type = row.Type,
+                Category = row.Category,
+                Description = row.Description.Trim(),
+                Amount = decimal.Round(row.Amount, 2),
+                Date = row.Date.Date,
+                CreatedAtUtc = now,
+            });
+            imported++;
+        }
+
+        db.SaveChanges();
+        return new ImportReport(imported, duplicates, errors);
+    }
+
     public OperationResult Delete(Guid id)
     {
         using var db = _factory.CreateDbContext();
@@ -124,6 +196,16 @@ public sealed class TransactionService
         db.SaveChanges();
 
         return OperationResult.Ok();
+    }
+
+    private static (DateTime Date, TransactionType Type, string Category, string Description, decimal Amount) DuplicateKey(
+        DateTime date,
+        TransactionType type,
+        string category,
+        string description,
+        decimal amount)
+    {
+        return (date.Date, type, category, description.Trim(), decimal.Round(amount, 2));
     }
 
     /// <summary>Returns a Romanian error message, or null when the input is valid.</summary>
