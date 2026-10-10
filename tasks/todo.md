@@ -31,15 +31,15 @@ tests/ExpenseTrackerPro.Tests/   net8.0  xUnit + SQLite in-memory
 
 ## Faza B — funcții (punctul 3)
 
-- [ ] Editare tranzacție
-- [ ] Confirmare la ștergere (prin `IDialogService`)
-- [ ] Navigare lună ◀ / ▶
-- [ ] Bară progres buget + roșu la sold negativ / buget depășit; setare buget din UI
-- [ ] Căutare + filtru categorie
-- [ ] Grafic cheltuieli pe categorii (fără dependență nouă)
-- [ ] Import CSV
-- [ ] Backup / restore `.db`
-- [ ] Teste pentru logica nouă
+- [x] Editare tranzacție
+- [x] Confirmare la ștergere (prin `IDialogService`)
+- [x] Navigare lună ◀ / ▶
+- [x] Bară progres buget + roșu la sold negativ / buget depășit; setare buget din UI
+- [x] Căutare + filtru categorie
+- [x] Grafic cheltuieli pe categorii (fără dependență nouă)
+- [x] Import CSV
+- [x] Backup / restore `.db`
+- [x] Teste pentru logica nouă
 
 ## Review
 
