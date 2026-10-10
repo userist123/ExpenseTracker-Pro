@@ -1,6 +1,6 @@
 # ExpenseTracker Pro — îmbunătățiri (punctele 1–4)
 
-Execuție: agenți Sonnet, secvențial (Faza A apoi Faza B). Review + push: Opus.
+Execuție: secvențial (Faza A apoi Faza B), cu review independent înainte de fiecare push.
 
 ## Arhitectură țintă
 
@@ -43,4 +43,9 @@ tests/ExpenseTrackerPro.Tests/   net8.0  xUnit + SQLite in-memory
 
 ## Review
 
-_(completat după execuție)_
+- Build Release (`--no-incremental`): 0 erori, 0 avertismente. Teste: 259/259 trec (verificat independent, nu doar din raport).
+- CI GitHub Actions (windows-latest) verde pe Faza A; Faza B verificată după push.
+- Review manual: `AmountParser` (regresia `12.50`), baseline `EnsureCreated` → migrări, pornire `App`, `BackupService` (validare, copie `before-restore`, rollback).
+- Test permanent `XamlBindingTests` verifică că toate binding-urile din `MainWindow.xaml` există în ViewModel.
+- **Neverificat:** UI-ul WPF rulat efectiv (aspect la 960×640, stiluri `ProgressBar`, `DataTrigger`-e). Trebuie pornit o dată pe Windows.
+- Butoanele din `MessageBox` (Da/Nu) urmează limba Windows-ului, nu sunt forțate în română.
