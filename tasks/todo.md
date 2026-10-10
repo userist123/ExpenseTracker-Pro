@@ -14,20 +14,20 @@ tests/ExpenseTrackerPro.Tests/   net8.0  xUnit + SQLite in-memory
 
 ## Faza A — fundație (punctele 1, 2, 4)
 
-- [ ] Repo: șterge `22`, README în rădăcină, `.sln`, structură `src/` + `tests/`
-- [ ] Core: `TransactionType` enum + ValueConverter compatibil cu datele existente ("Venit"/"Cheltuială")
-- [ ] Core: categorii per tip (venit vs. cheltuială)
-- [ ] Core: `AmountParser` — fără ambiguitate punct/virgulă (bug `12.50` → 1250)
-- [ ] Core: `TransactionService` cu `IDbContextFactory`, totaluri lunare
-- [ ] Core: migrări EF (InitialCreate = schema actuală) + baseline pentru baze create cu `EnsureCreated`
-- [ ] Core: migrare `AddSettings` — buget lunar configurabil
-- [ ] Core: export CSV prinde `UnauthorizedAccessException`; protecție formula-injection
-- [ ] Fără date demo în baza reală
-- [ ] App: cultură `ro-RO` globală pentru formatare
-- [ ] App: categorie filtrată după tip; diacritice corecte; cod/XAML formatat
-- [ ] Teste xUnit: parsare, totaluri, CRUD, baseline migrare, CSV
-- [ ] CI GitHub Actions (windows-latest)
-- [ ] EF Core → ultimul patch 8.0.x
+- [x] Repo: șterge `22`, README în rădăcină, `.sln`, structură `src/` + `tests/`
+- [x] Core: `TransactionType` enum + ValueConverter compatibil cu datele existente ("Venit"/"Cheltuială")
+- [x] Core: categorii per tip (venit vs. cheltuială)
+- [x] Core: `AmountParser` — fără ambiguitate punct/virgulă (bug `12.50` → 1250)
+- [x] Core: `TransactionService` cu `IDbContextFactory`, totaluri lunare
+- [x] Core: migrări EF (InitialCreate = schema actuală) + baseline pentru baze create cu `EnsureCreated`
+- [x] Core: migrare `AddSettings` — buget lunar configurabil
+- [x] Core: export CSV prinde `UnauthorizedAccessException`; protecție formula-injection
+- [x] Fără date demo în baza reală
+- [x] App: cultură `ro-RO` globală pentru formatare
+- [x] App: categorie filtrată după tip; diacritice corecte; cod/XAML formatat
+- [x] Teste xUnit: parsare, totaluri, CRUD, baseline migrare, CSV
+- [x] CI GitHub Actions (windows-latest)
+- [x] EF Core → ultimul patch 8.0.x
 
 ## Faza B — funcții (punctul 3)
 
