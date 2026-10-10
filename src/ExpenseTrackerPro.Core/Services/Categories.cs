@@ -24,6 +24,9 @@ public static class Categories
         "Altele",
     ];
 
+    /// <summary>Every category of either type, without duplicates (expense categories first).</summary>
+    public static IReadOnlyList<string> All { get; } = Expense.Concat(Income).Distinct(StringComparer.Ordinal).ToList();
+
     public static IReadOnlyList<string> For(TransactionType type)
     {
         return type switch

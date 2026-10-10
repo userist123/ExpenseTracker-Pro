@@ -34,12 +34,19 @@ public sealed class TransactionService
 
     public MonthlySummary GetSummary(int year, int month)
     {
-        var items = GetMonth(year, month);
-        var income = items.Where(x => x.Type == TransactionType.Income).Sum(x => x.Amount);
-        var expenses = items.Where(x => x.Type == TransactionType.Expense).Sum(x => x.Amount);
-        var budget = _settings.GetMonthlyBudget();
+        return GetSummary(GetMonth(year, month));
+    }
 
-        return new MonthlySummary(income, expenses, income - expenses, budget, budget - expenses);
+    /// <summary>Totals of already loaded items, so callers that hold the month's list do not query it again.</summary>
+    public MonthlySummary GetSummary(IReadOnlyList<TransactionItem> items)
+    {
+        return MonthlySummary.From(items, _settings.GetMonthlyBudget());
+    }
+
+    /// <summary>Expenses of the month grouped by category, largest first (empty when there are none).</summary>
+    public IReadOnlyList<CategoryExpense> GetExpensesByCategory(int year, int month)
+    {
+        return ExpenseBreakdown.From(GetMonth(year, month));
     }
 
     public OperationResult<TransactionItem> Add(
