@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ExpenseTrackerPro.Core\ExpenseTrackerPro.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    The view model and its dialog interface are compiled straight into the test project. They use no WPF types, so
+    they can be tested on any OS without referencing the net8.0-windows application project.
+  -->
+  <ItemGroup>
+    <Compile Include="..\..\src\ExpenseTrackerPro\ViewModels\*.cs" Link="App\ViewModels\%(Filename)%(Extension)" />
+    <Compile Include="..\..\src\ExpenseTrackerPro\Services\IDialogService.cs" Link="App\Services\IDialogService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

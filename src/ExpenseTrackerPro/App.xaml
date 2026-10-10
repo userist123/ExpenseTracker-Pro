@@ -1,0 +1,58 @@
+<Application
+    x:Class="ExpenseTrackerPro.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:ExpenseTrackerPro.Converters">
+
+    <Application.Resources>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="#08111F" />
+        <SolidColorBrush x:Key="PanelBrush" Color="#10233A" />
+        <SolidColorBrush x:Key="PanelBorderBrush" Color="#294965" />
+        <SolidColorBrush x:Key="TextBrush" Color="#EFF7FF" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#A4B6CB" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#57D9BE" />
+        <SolidColorBrush x:Key="DangerBrush" Color="#FF8797" />
+
+        <converters:TransactionTypeDisplayConverter x:Key="TransactionTypeDisplay" />
+
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,9" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="#1B3855" />
+        </Style>
+
+        <!-- Flat progress bar: a rounded track with a coloured indicator. PART_Track and PART_Indicator are required. -->
+        <Style x:Key="FlatProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Background" Value="#1B3855" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4" />
+                            <Border x:Name="PART_Track" />
+                            <Border
+                                x:Name="PART_Indicator"
+                                HorizontalAlignment="Left"
+                                Background="{TemplateBinding Foreground}"
+                                CornerRadius="4" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Padding" Value="18" />
+        </Style>
+    </Application.Resources>
+</Application>
