@@ -57,8 +57,20 @@ Fișierele din `src/ExpenseTrackerPro.Core/Migrations` sunt generate; nu se edit
 
 ## Publicare EXE
 
+### Descărcare din GitHub Actions (fără .NET SDK)
+
+Fiecare push construiește automat un `.exe` gata de rulare:
+
+1. Pe GitHub, deschide tab-ul **Actions** și alege ultima rulare **CI** reușită (bifă verde).
+2. Jos, la **Artifacts**, descarcă `ExpenseTrackerPro-win-x64` (un `.zip`).
+3. Dezarhivează și pornește `ExpenseTrackerPro.exe`.
+
+Artifactul este păstrat 30 de zile. Executabilul nu este semnat, așa că Windows SmartScreen poate afișa un avertisment: **Mai multe informații → Rulează oricum**.
+
+### Construire locală
+
 ```powershell
-dotnet publish src/ExpenseTrackerPro -c Release -r win-x64 --self-contained true
+dotnet publish src/ExpenseTrackerPro/ExpenseTrackerPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish
 ```
 
 ## Funcții incluse
